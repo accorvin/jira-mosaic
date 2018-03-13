@@ -40,7 +40,19 @@ class ThroughputbyepicQuery(ThroughputQuery):
             if epic != 'UNASSIGNED':
                 self.results_report += epic_line.format(epic=epic,
                                                         throughput=throughput)
+
+        # Count everything assigned
+        assigned = ('\tCount of issues assigned to an epic: '
+                    '{throughput}\n')
+        assigned_items = sum([
+            throughput for epic, throughput in epic_throughput.items()
+            if epic != 'UNASSIGNED'
+        ])
+        self.results_report += assigned.format(throughput=assigned_items)
+
+        # Count everything unassigned
         unassigned = ('\tCount of issues not assigned to an epic: '
                       '{throughput}')
         unassigned_items = epic_throughput['UNASSIGNED']
+
         self.results_report += unassigned.format(throughput=unassigned_items)
