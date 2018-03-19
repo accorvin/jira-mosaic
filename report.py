@@ -8,7 +8,7 @@ import logging
 from queries import query_map
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def parse_args():
@@ -46,7 +46,6 @@ def main():
         'kerberos': True
     }
     client = jira.client.JIRA(**client_args)
-    print(client.current_user())
 
     query_vars = {
         'project': args.project,
