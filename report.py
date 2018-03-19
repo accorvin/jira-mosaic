@@ -16,7 +16,8 @@ def parse_args():
 
     parser.add_argument('-s', '--server',
                         default='https://projects.engineering.redhat.com')
-    parser.add_argument('-c', '--cert', default=None)
+    parser.add_argument('-c', '--cert',
+                        default='/etc/pki/tls/certs/ca-bundle.crt')
     parser.add_argument('-p', '--project', default='FACTORY')
 
     today = datetime.date.today()
