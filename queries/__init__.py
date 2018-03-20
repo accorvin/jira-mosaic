@@ -3,6 +3,7 @@ from .ThroughputQuery import ThroughputbyepicQuery
 from .LeadtimeQuery import LeadtimeQuery
 from .LeadtimeQuery import LeadtimebyepicQuery
 from .CycletimeQuery import CycletimeQuery
+from .CycletimeQuery import PrioritycycletimeQuery
 from .StatusdurationQuery import StatusdurationQuery
 
 
@@ -12,5 +13,6 @@ query_map = {
     'leadtime': LeadtimeQuery,
     'leadtimebyepic': LeadtimebyepicQuery,
     'cycletime': CycletimeQuery,
+    'prioritycycletime': PrioritycycletimeQuery,
     'statusduration': StatusdurationQuery
 }
