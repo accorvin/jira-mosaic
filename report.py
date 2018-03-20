@@ -8,9 +8,6 @@ import logging
 from queries import query_map
 
 
-logging.basicConfig(level=logging.INFO)
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
 
@@ -26,6 +23,9 @@ def parse_args():
     parser.add_argument('-e', '--end-date', default=str(today))
 
     parser.add_argument('-q', '--query', required=True, action='append')
+    parser.add_argument('-v', '--verbose', default=False,
+                        action='store_true',
+                        help='Enable debug logging')
 
     return parser.parse_args()
 
@@ -41,6 +41,12 @@ def check_queries(queries):
 
 def main():
     args = parse_args()
+
+    if args.verbose:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+
     client_args = {
         'server': args.server,
         'options': dict(verify=args.cert),
