@@ -23,6 +23,7 @@ def parse_args():
     parser.add_argument('-e', '--end-date', default=str(today))
 
     parser.add_argument('-q', '--query', required=True, action='append')
+    parser.add_argument('-a', '--query-argument', default=None)
     parser.add_argument('-v', '--verbose', default=False,
                         action='store_true',
                         help='Enable debug logging')
@@ -57,7 +58,8 @@ def main():
     query_vars = {
         'project': args.project,
         'begin_date': args.begin_date,
-        'end_date': args.end_date
+        'end_date': args.end_date,
+        'argument': args.query_argument
     }
 
     check_queries(args.query)
