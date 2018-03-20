@@ -8,15 +8,13 @@ import logging
 from queries import query_map
 
 
-logging.basicConfig(level=logging.DEBUG)
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-s', '--server',
                         default='https://projects.engineering.redhat.com')
-    parser.add_argument('-c', '--cert', default=None)
+    parser.add_argument('-c', '--cert',
+                        default='/etc/pki/tls/certs/ca-bundle.crt')
     parser.add_argument('-p', '--project', default='FACTORY')
 
     today = datetime.date.today()
@@ -25,6 +23,10 @@ def parse_args():
     parser.add_argument('-e', '--end-date', default=str(today))
 
     parser.add_argument('-q', '--query', required=True, action='append')
+    parser.add_argument('-a', '--query-argument', default=None)
+    parser.add_argument('-v', '--verbose', default=False,
+                        action='store_true',
+                        help='Enable debug logging')
 
     return parser.parse_args()
 
@@ -40,18 +42,24 @@ def check_queries(queries):
 
 def main():
     args = parse_args()
+
+    if args.verbose:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+
     client_args = {
         'server': args.server,
         'options': dict(verify=args.cert),
         'kerberos': True
     }
     client = jira.client.JIRA(**client_args)
-    print(client.current_user())
 
     query_vars = {
         'project': args.project,
         'begin_date': args.begin_date,
-        'end_date': args.end_date
+        'end_date': args.end_date,
+        'argument': args.query_argument
     }
 
     check_queries(args.query)
