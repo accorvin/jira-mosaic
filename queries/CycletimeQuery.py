@@ -18,18 +18,25 @@ class CycletimeQuery(BaseQuery):
         if 'types' not in self.vars:
             self.vars['types'] = 'bug, story, task'
 
-    def _get_issue_cycle_time(self, issue):
-        in_progress_date = None
+    def _get_issue_start_date(self, issue):
+        start_date = None
         for history in issue.changelog.histories:
             for item in history.items:
-                if item.field == 'status' and item.toString == 'In Progress':
-                    in_progress_date = history.created
-        if in_progress_date is None:
+                if item.field == 'status':
+                    if item.fromString == 'To Do' and item.toString != 'Next':
+                        start_date = history.created
+                    elif (item.fromString == 'Next' and
+                          item.toString != 'To Do'):
+                        start_date = history.created
+        if start_date is None:
             raise Exception(('No transition from To Do to In Progress '
                              'could be found for issue {0}').format(issue))
+        return start_date
 
+    def _get_issue_cycle_time(self, issue):
+        start_date = self._get_issue_start_date(issue)
         cycle_time = date_difference(issue.fields.resolutiondate,
-                                     in_progress_date)
+                                     start_date)
         line = '\tFor issue {issue}, the cycle time was {cycletime} days'
         logging.debug(line.format(issue=issue.key, cycletime=cycle_time))
         return cycle_time
@@ -49,6 +56,7 @@ class CycletimeQuery(BaseQuery):
 
     def build_results(self):
         issues = self.results['cycletime']
+        logging.debug('There were {0} issues'.format(len(issues)))
         average_cycle_time = self._get_total_cycle_time(issues)
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']

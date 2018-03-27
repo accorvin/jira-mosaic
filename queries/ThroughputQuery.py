@@ -1,3 +1,5 @@
+import logging
+
 from .BaseQuery import BaseQuery
 from .utils import by_epic
 
@@ -33,6 +35,11 @@ class ThroughputbyepicQuery(ThroughputQuery):
         epic_throughput = {}
         for epic, epic_issues in epics.items():
             epic_throughput[epic] = len(epic_issues)
+
+        unassigned_issues = ', '.join(issue.key for issue in epics['UNASSIGNED'])
+        msg = 'The following issues were not assigned to an epic: {0}'
+        logging.debug(msg.format(unassigned_issues))
+
 
         self.results_report = 'Number of issues completed by epic:\n\n'
         epic_line = '\t{epic}: {throughput} issues\n'
