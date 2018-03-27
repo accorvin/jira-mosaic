@@ -8,6 +8,7 @@ setup(name='mosaic',
       author='Alex Corvin',
       author_email='acorvin@redhat.com',
       packages=find_packages(),
+      install_requires=['jira', 'pbr', 'requests-kerberos'],
       entry_points={
           'console_scripts': ['mosaic=mosaic.mosaic:main']
       })
