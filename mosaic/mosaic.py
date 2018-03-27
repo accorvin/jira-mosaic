@@ -5,7 +5,7 @@ import datetime
 import jira
 import logging
 
-from queries import query_map
+from .queries import query_map
 
 
 def parse_args():
