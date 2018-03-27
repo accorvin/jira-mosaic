@@ -35,6 +35,7 @@ class LeadtimeQuery(BaseQuery):
     def build_results(self):
         issues = self.results['leadtime']
         average_lead_time = self._get_issues_lead_time(issues)
+        self.result = average_lead_time
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
         line = ('Between {begin_date} and {end_date}, '

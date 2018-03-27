@@ -6,6 +6,7 @@ class BaseQuery(object):
         self.query_name = query_name
         self.client = client
         self.vars = vars
+        self.result = None
 
     def build_query(self):
         self.queries = {}

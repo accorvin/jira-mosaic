@@ -54,6 +54,7 @@ class StatusdurationQuery(BaseQuery):
                 total_duration += duration
 
         average_duration = total_duration / issues
+        self.result = average_duration
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
         line = ('Between {begin_date} and {end_date}, '

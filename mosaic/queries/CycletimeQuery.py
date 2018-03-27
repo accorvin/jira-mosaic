@@ -58,6 +58,7 @@ class CycletimeQuery(BaseQuery):
         issues = self.results['cycletime']
         logging.debug('There were {0} issues'.format(len(issues)))
         average_cycle_time = self._get_total_cycle_time(issues)
+        self.result = average_cycle_time
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
         line = ('Between {begin_date} and {end_date}, '
@@ -81,6 +82,7 @@ class PrioritycycletimeQuery(CycletimeQuery):
     def build_results(self):
         issues = self.results['prioritycycletime']
         average_cycle_time = self._get_total_cycle_time(issues)
+        self.result = average_cycle_time
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
         line = ('Between {begin_date} and {end_date}, '
