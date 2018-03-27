@@ -19,6 +19,7 @@ class ThroughputQuery(BaseQuery):
 
     def build_results(self):
         result_count = len(self.results['throughput'])
+        self.result = result_count
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
         line = ('Between {begin_date} and {end_date}, '

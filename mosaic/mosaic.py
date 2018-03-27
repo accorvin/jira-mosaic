@@ -5,7 +5,7 @@ import datetime
 import jira
 import logging
 
-from queries import query_map
+from .queries import query_map
 
 
 def parse_args():
@@ -40,31 +40,25 @@ def check_queries(queries):
                                        query_options=str(query_map.keys())))
 
 
-def main():
-    args = parse_args()
-
-    if args.verbose:
-        logging.basicConfig(level=logging.DEBUG)
-    else:
-        logging.basicConfig(level=logging.INFO)
-
-    client_args = {
-        'server': args.server,
-        'options': dict(verify=args.cert),
-        'kerberos': True
-    }
-    client = jira.client.JIRA(**client_args)
+def run(args, client=None):
+    if not client:
+        client_args = {
+            'server': args['server'],
+            'options': dict(verify=args['cert']),
+            'kerberos': True
+        }
+        client = jira.client.JIRA(**client_args)
 
     query_vars = {
-        'project': args.project,
-        'begin_date': args.begin_date,
-        'end_date': args.end_date,
-        'argument': args.query_argument
+        'project': args['project'],
+        'begin_date': args['begin_date'],
+        'end_date': args['end_date'],
+        'argument': args['query_argument']
     }
 
-    check_queries(args.query)
+    check_queries(args['query'])
     queries = []
-    for query in args.query:
+    for query in args['query']:
         queries.append(query_map[query](query, client, query_vars))
 
     for query in queries:
@@ -73,8 +67,20 @@ def main():
         query.run()
         query.build_results()
 
-    for query in queries:
-        query.print_results()
+    if args['auto_mode']:
+        return queries[0].result
+    else:
+        for query in queries:
+            query.print_results()
+
+
+def main():
+    args = parse_args()
+    if args['verbose']:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+    run(args)
 
 
 if __name__ == '__main__':
