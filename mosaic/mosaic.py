@@ -28,7 +28,7 @@ def parse_args():
                         action='store_true',
                         help='Enable debug logging')
 
-    return parser.parse_args()
+    return vars(parser.parse_args())
 
 
 def check_queries(queries):
@@ -67,7 +67,7 @@ def run(args, client=None):
         query.run()
         query.build_results()
 
-    if args['auto_mode']:
+    if 'auto_mode' in args and args['auto_mode']:
         return queries[0].result
     else:
         for query in queries:
