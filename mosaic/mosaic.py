@@ -8,6 +8,14 @@ import logging
 from .queries import query_map
 
 
+log = logging.getLogger('mosaic')
+ch = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter(('%(asctime)s - %(name)s - '
+                               '%(levelname)s - %(message)s'))
+ch.setFormatter(formatter)
+log.addHandler(ch)
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
 
@@ -77,9 +85,10 @@ def run(args, client=None):
 def main():
     args = parse_args()
     if args['verbose']:
-        logging.basicConfig(level=logging.DEBUG)
+        log.setLevel(logging.DEBUG)
     else:
-        logging.basicConfig(level=logging.INFO)
+        log.setLevel(logging.INFO)
+
     run(args)
 
 
