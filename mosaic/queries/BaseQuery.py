@@ -1,12 +1,30 @@
+import datetime
 import logging
 
 
 class BaseQuery(object):
+    supports_rolling = False
+
     def __init__(self, query_name, client, vars):
         self.query_name = query_name
         self.client = client
         self.vars = vars
         self.result = None
+        self.rolling = vars['rolling']
+        if self.rolling:
+            if not self.supports_rolling:
+                msg = ('The specified query: "{query}" does not support the '
+                       'rolling argument.').format(query=self.query_name)
+                raise Exception(msg)
+            today = datetime.date.today()
+            begin_date = datetime.datetime.strptime(vars['begin_date'],
+                                                    '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(vars['end_date'],
+                                                  '%Y-%m-%d')
+            if not (today >= begin_date.date() and today <= end_date.date()):
+                msg = ('The rolling argument can only be used for date ranges '
+                       'that include today.')
+                raise Exception(msg)
 
     def build_query(self):
         self.queries = {}

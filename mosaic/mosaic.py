@@ -50,7 +50,14 @@ def parse_args():
                         action='store_true',
                         help='Enable debug logging')
     parser.add_argument('-l', '--list', action='store_true',
+                        default=False,
                         help='Print a list of available queries')
+    parser.add_argument('-r', '--rolling', action='store_true',
+                        default=False,
+                        help=('Use data for currently in progress stories '
+                              'when performing calculations for date ranges '
+                              'that include today. Not supported by all '
+                              'queries'))
 
     return vars(parser.parse_args())
 
@@ -77,7 +84,8 @@ def run(args, client=None):
         'project': args['project'],
         'begin_date': args['begin_date'],
         'end_date': args['end_date'],
-        'argument': args['query_argument']
+        'argument': args['query_argument'],
+        'rolling': args['rolling']
     }
 
     check_queries(args['query'])
@@ -110,7 +118,7 @@ def main():
         queries = ', '.join(query_map.keys())
         log.info(msg.format(queries=queries))
         sys.exit(0)
-    elif 'queries' not in args or len(args['queries']) == 0:
+    elif 'query' not in args or len(args['query']) == 0:
         msg = 'You must specify at least one query with the -q argument.'
         log.error(msg)
         sys.exit(1)
