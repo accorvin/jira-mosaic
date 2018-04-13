@@ -21,18 +21,31 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('-s', '--server',
-                        default='https://projects.engineering.redhat.com')
+                        default='https://projects.engineering.redhat.com',
+                        help='The JIRA server to connect to')
     parser.add_argument('-c', '--cert',
-                        default='/etc/pki/tls/certs/ca-bundle.crt')
-    parser.add_argument('-p', '--project', default='FACTORY')
+                        default='/etc/pki/tls/certs/ca-bundle.crt',
+                        help=('The path to the certification bundle to use '
+                              'when connecting to the JIRA server'))
+    parser.add_argument('-p', '--project', default='FACTORY',
+                        help='The JIRA project to get metrics for')
 
     today = datetime.date.today()
     two_weeks_ago = today - datetime.timedelta(days=14)
-    parser.add_argument('-b', '--begin-date', default=str(two_weeks_ago))
-    parser.add_argument('-e', '--end-date', default=str(today))
+    parser.add_argument('-b', '--begin-date', default=str(two_weeks_ago),
+                        help=('The beginning of the date range to calculate '
+                              'metrics for'))
+    parser.add_argument('-e', '--end-date', default=str(today),
+                        help=('The end of the date range to calculate '
+                              'metrics for'))
 
-    parser.add_argument('-q', '--query', action='append')
-    parser.add_argument('-a', '--query-argument', default=None)
+    parser.add_argument('-q', '--query', action='append',
+                        help=('The query to execute. Specify multiple '
+                              'arguments by repeating this argument'))
+    parser.add_argument('-a', '--query-argument', default=None,
+                        help=('The argument to be passed to the query. This '
+                              'will be passed to all queries if multiple are '
+                              'specified'))
     parser.add_argument('-v', '--verbose', default=False,
                         action='store_true',
                         help='Enable debug logging')
