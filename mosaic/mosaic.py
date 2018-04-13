@@ -85,7 +85,7 @@ def run(args, client=None):
         'begin_date': args['begin_date'],
         'end_date': args['end_date'],
         'argument': args['query_argument'],
-        'rolling': args['rolling']
+        'rolling': args.get('rolling', False)
     }
 
     check_queries(args['query'])
