@@ -94,6 +94,7 @@ class CycletimeQuery(BaseQuery):
 
 
 class PrioritycycletimeQuery(CycletimeQuery):
+    supports_rolling = False
     query_bases = {
         'prioritycycletime': ('PROJECT = {project} '
                               'AND TYPE IN ({types}) '
