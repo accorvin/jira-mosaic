@@ -4,6 +4,7 @@ import argparse
 import datetime
 import jira
 import logging
+import sys
 
 from .queries import query_map
 
@@ -30,11 +31,13 @@ def parse_args():
     parser.add_argument('-b', '--begin-date', default=str(two_weeks_ago))
     parser.add_argument('-e', '--end-date', default=str(today))
 
-    parser.add_argument('-q', '--query', required=True, action='append')
+    parser.add_argument('-q', '--query', action='append')
     parser.add_argument('-a', '--query-argument', default=None)
     parser.add_argument('-v', '--verbose', default=False,
                         action='store_true',
                         help='Enable debug logging')
+    parser.add_argument('-l', '--list', action='store_true',
+                        help='Print a list of available queries')
 
     return vars(parser.parse_args())
 
@@ -89,6 +92,15 @@ def main():
     else:
         log.setLevel(logging.INFO)
 
+    if args['list']:
+        msg = 'The following queries are supported: [{queries}]'
+        queries = ', '.join(query_map.keys())
+        log.info(msg.format(queries=queries))
+        sys.exit(0)
+    elif 'queries' not in args or len(args['queries']) == 0:
+        msg = 'You must specify at least one query with the -q argument.'
+        log.error(msg)
+        sys.exit(1)
     run(args)
 
 
