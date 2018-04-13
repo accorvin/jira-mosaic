@@ -94,19 +94,25 @@ class CycletimeQuery(BaseQuery):
 
 
 class PrioritycycletimeQuery(CycletimeQuery):
-    supports_rolling = False
+    supports_rolling = True
     query_bases = {
         'prioritycycletime': ('PROJECT = {project} '
                               'AND TYPE IN ({types}) '
                               'AND statusCategory = Done '
                               'AND priority = {argument} '
                               'AND status CHANGED TO Done '
-                              'DURING("{begin_date}", "{end_date}")')
+                              'DURING("{begin_date}", "{end_date}")'),
+        'prioritycycletime_rolling': ('PROJECT = {project} '
+                                      'AND TYPE IN ({types}) '
+                                      'AND statusCategory = "In Progress" '
+                                      'AND priority = {argument} ')
     }
 
     def build_results(self):
         issues = self.results['prioritycycletime']
-        average_cycle_time = self._get_total_cycle_time(issues)
+        in_progress_issues = self.results['prioritycycletime_rolling']
+        average_cycle_time = self._get_total_cycle_time(issues,
+                                                        in_progress_issues)
         self.result = average_cycle_time
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
