@@ -91,7 +91,7 @@ def run(args, client=None):
     check_queries(args['query'])
     queries = []
     for query in args['query']:
-        queries.append(query_map[query](query, client, query_vars))
+        queries.append(query_map[query](query, client, query_vars, log))
 
     for query in queries:
         query.set_defaults()
