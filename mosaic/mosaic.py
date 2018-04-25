@@ -18,7 +18,8 @@ log.addHandler(ch)
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    desc = 'A utility for calculating various metrics from JIRA data'
+    parser = argparse.ArgumentParser(description=desc)
 
     parser.add_argument('-s', '--server',
                         default='https://projects.engineering.redhat.com',
@@ -58,6 +59,9 @@ def parse_args():
                               'when performing calculations for date ranges '
                               'that include today. Not supported by all '
                               'queries'))
+    parser.add_argument('--query-append', default='',
+                        help=('An additional string to be appended to all '
+                              'JIRA search queries'))
 
     return vars(parser.parse_args())
 
@@ -85,7 +89,8 @@ def run(args, client=None):
         'begin_date': args['begin_date'],
         'end_date': args['end_date'],
         'argument': args['query_argument'],
-        'rolling': args.get('rolling', False)
+        'rolling': args.get('rolling', False),
+        'query_append': args.get('query_append', '')
     }
 
     check_queries(args['query'])
