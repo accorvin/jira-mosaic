@@ -99,13 +99,13 @@ class PrioritycycletimeQuery(CycletimeQuery):
         'prioritycycletime': ('PROJECT = {project} '
                               'AND TYPE IN ({types}) '
                               'AND statusCategory = Done '
-                              'AND priority = {argument} '
+                              'AND priority in ({argument}) '
                               'AND status CHANGED TO Done '
                               'DURING("{begin_date}", "{end_date}")'),
         'prioritycycletime_rolling': ('PROJECT = {project} '
                                       'AND TYPE IN ({types}) '
                                       'AND statusCategory = "In Progress" '
-                                      'AND priority = {argument} ')
+                                      'AND priority in ({argument}) ')
     }
 
     def build_results(self):
