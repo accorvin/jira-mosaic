@@ -11,6 +11,7 @@ class BaseQuery(object):
         self.vars = vars
         self.result = None
         self.rolling = vars['rolling']
+        self.query_append = vars.get('query_append', '')
         if self.rolling:
             if not self.supports_rolling:
                 msg = ('The specified query: "{query}" does not support the '
@@ -31,7 +32,8 @@ class BaseQuery(object):
         if not self.query_bases or len(self.query_bases) == 0:
             raise Exception('Subclass must set query base')
         for query, query_string in self.query_bases.items():
-            self.queries[query] = query_string.format(**self.vars)
+            self.queries[query] = query_string.format(**self.vars) + \
+                    ' ' + self.query_append
 
     def set_defaults(self):
         pass
