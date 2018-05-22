@@ -11,10 +11,6 @@ class ThroughputQuery(BaseQuery):
                        'DURING("{begin_date}", "{end_date}")')
     }
 
-    def set_defaults(self):
-        if 'types' not in self.vars:
-            self.vars['types'] = 'bug, story, task'
-
     def build_results(self):
         result_count = len(self.results['throughput'])
         self.result = result_count
