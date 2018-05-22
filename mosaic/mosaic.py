@@ -62,6 +62,10 @@ def parse_args():
     parser.add_argument('--query-append', default='',
                         help=('An additional string to be appended to all '
                               'JIRA search queries'))
+    parser.add_argument('-t', '--types', default='bug, story, task',
+                        help=('An optional comma separated string argument '
+                              'to query for specific types of tickets '
+                              'eg:\'bug, story\' '))
 
     return vars(parser.parse_args())
 
@@ -90,7 +94,8 @@ def run(args, client=None):
         'end_date': args['end_date'],
         'argument': args['query_argument'],
         'rolling': args.get('rolling', False),
-        'query_append': args.get('query_append', '')
+        'query_append': args.get('query_append', ''),
+        'types': args['types']
     }
 
     check_queries(args['query'])
