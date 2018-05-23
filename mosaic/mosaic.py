@@ -16,6 +16,8 @@ formatter = logging.Formatter(('%(asctime)s - %(name)s - '
 ch.setFormatter(formatter)
 log.addHandler(ch)
 
+DEFAULT_TYPES = 'bug, story, task'
+
 
 def parse_args():
     desc = 'A utility for calculating various metrics from JIRA data'
@@ -62,7 +64,7 @@ def parse_args():
     parser.add_argument('--query-append', default='',
                         help=('An additional string to be appended to all '
                               'JIRA search queries'))
-    parser.add_argument('-t', '--types', default='bug, story, task',
+    parser.add_argument('-t', '--types', default=DEFAULT_TYPES,
                         help=('An optional comma separated string argument '
                               'to query for specific types of tickets '
                               'eg:\'bug, story\' '))
@@ -95,7 +97,7 @@ def run(args, client=None):
         'argument': args['query_argument'],
         'rolling': args.get('rolling', False),
         'query_append': args.get('query_append', ''),
-        'types': args['types']
+        'types': args.get('types', DEFAULT_TYPES)
     }
 
     check_queries(args['query'])
