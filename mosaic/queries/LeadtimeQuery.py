@@ -1,7 +1,5 @@
-import datetime
-
 from .BaseQuery import BaseQuery
-from .utils import by_epic
+from .utils import by_epic, date_difference
 
 
 class LeadtimeQuery(BaseQuery):
@@ -17,14 +15,12 @@ class LeadtimeQuery(BaseQuery):
         if 'types' not in self.vars:
             self.vars['types'] = 'bug, story, task'
 
-    def _get_date(self, date_string):
-        return datetime.datetime.strptime(date_string[0:10],
-                                          '%Y-%m-%d')
-
     def _get_issue_lead_time(self, issue):
-        created_date = self._get_date(issue.fields.created)
-        resolution_date = self._get_date(issue.fields.resolutiondate)
-        return (resolution_date - created_date).days
+        lead_time = date_difference(
+            issue.fields.resolutiondate, issue.fields.created)
+        line = '\tFor issue {issue}, the lead time was {leadtime} days'
+        self.log.debug(line.format(issue=issue.key, leadtime=lead_time))
+        return lead_time
 
     def _get_issues_lead_time(self, issues):
         total_lead_time = 0
