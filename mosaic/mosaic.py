@@ -41,6 +41,8 @@ def parse_args():
     parser.add_argument('-e', '--end-date', default=str(today),
                         help=('The end of the date range to calculate '
                               'metrics for'))
+    parser.add_argument('--end-state', default='Done',
+                        help=('The final state for tickets to filter on.'))
 
     parser.add_argument('-q', '--query', action='append',
                         help=('The query to execute. Specify multiple '
@@ -94,6 +96,7 @@ def run(args, client=None):
         'project': args['project'],
         'begin_date': args['begin_date'],
         'end_date': args['end_date'],
+        'end_state': args.get('end_state', 'Done'),
         'argument': args['query_argument'],
         'rolling': args.get('rolling', False),
         'query_append': args.get('query_append', ''),

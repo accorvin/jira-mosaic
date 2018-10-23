@@ -7,7 +7,7 @@ class ThroughputQuery(BaseQuery):
         'throughput': ('PROJECT = {project} '
                        'AND TYPE IN ({types}) '
                        'AND statusCategory = Done '
-                       'AND status CHANGED TO Done '
+                       'AND status CHANGED TO {end_state} '
                        'DURING("{begin_date}", "{end_date}")')
     }
 

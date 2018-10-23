@@ -11,7 +11,7 @@ class CycletimeQuery(BaseQuery):
         'cycletime': ('PROJECT = {project} '
                       'AND TYPE IN ({types}) '
                       'AND statusCategory = Done '
-                      'AND status CHANGED TO Done '
+                      'AND status CHANGED TO {end_state} '
                       'DURING("{begin_date}", "{end_date}")'),
         'cycletime_rolling': ('PROJECT = {project} '
                               'AND TYPE IN ({types}) '
@@ -100,7 +100,7 @@ class PrioritycycletimeQuery(CycletimeQuery):
                               'AND TYPE IN ({types}) '
                               'AND statusCategory = Done '
                               'AND priority in ({argument}) '
-                              'AND status CHANGED TO Done '
+                              'AND status CHANGED TO {end_state} '
                               'DURING("{begin_date}", "{end_date}")'),
         'prioritycycletime_rolling': ('PROJECT = {project} '
                                       'AND TYPE IN ({types}) '
