@@ -27,9 +27,9 @@ def date_difference(later_date, earlier_date):
         later_date = later_date[0:19]
         earlier_date = earlier_date[0:19]
         later_date_object = datetime.datetime.strptime(later_date,
-                                                    date_format)
+                                                       date_format)
         earlier_date_object = datetime.datetime.strptime(earlier_date,
-                                                        date_format)
+                                                         date_format)
         difference = (later_date_object - earlier_date_object).total_seconds()
         # Convert difference to days.
         return difference / float(60 * 60 * 24)
@@ -38,8 +38,8 @@ def date_difference(later_date, earlier_date):
         later_date = later_date[0:10]
         earlier_date = earlier_date[0:10]
         later_date_object = datetime.datetime.strptime(later_date,
-                                                    date_format)
+                                                       date_format)
         earlier_date_object = datetime.datetime.strptime(earlier_date,
-                                                        date_format)
+                                                         date_format)
         difference = (later_date_object - earlier_date_object).days
         return difference
