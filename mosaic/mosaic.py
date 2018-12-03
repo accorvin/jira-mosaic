@@ -92,6 +92,8 @@ def run(args, client=None):
         }
         client = jira.client.JIRA(**client_args)
 
+    quoted_types = ",".join('"%s"' % t.strip() for t in
+                            args.get('types', DEFAULT_TYPES).split(','))
     query_vars = {
         'project': args['project'],
         'begin_date': args['begin_date'],
@@ -100,7 +102,7 @@ def run(args, client=None):
         'argument': args['query_argument'],
         'rolling': args.get('rolling', False),
         'query_append': args.get('query_append', ''),
-        'types': args.get('types', DEFAULT_TYPES)
+        'types': quoted_types,
     }
 
     check_queries(args['query'])
