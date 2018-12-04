@@ -1,26 +1,33 @@
-import datetime
-
 from .BaseQuery import BaseQuery
 from .utils import date_difference
 
 
 class Transition():
-    def __init__(self, status, timestamp):
-        self.status = status
+    def __init__(self, to_status, from_status, timestamp):
+        self.to_status = to_status
+        self.from_status = from_status
         self.timestamp = timestamp
 
 
 class StatusdurationQuery(BaseQuery):
     supports_rolling = True
+
+    # This means you can use --rolling in combination with --end-date
+    supports_isolated_rolling = True
+
     query_bases = {
-        'statusduration': ('PROJECT = {project} '
-                           'AND TYPE IN ({types}) '
-                           'AND statusCategory = Done '
-                           'AND status CHANGED TO {end_state} '
-                           'DURING("{begin_date}", "{end_date}") '),
-        'statusduration_rolling': ('PROJECT = {project} '
-                                   'AND TYPE IN ({types}) '
-                                   'AND statusCategory = "In Progress" ')
+        'statusduration': (
+            'PROJECT = {project} '
+            'AND TYPE IN ({types}) '
+            'AND statusCategory = Done '
+            'AND status CHANGED TO {end_state} '
+            'DURING("{begin_date}", "{end_date}") '),
+        'statusduration_rolling': (
+            'PROJECT = {project} '
+            'AND TYPE IN ({types}) '
+            'AND status CHANGED TO "{argument}" BEFORE "{end_date}" '
+            'AND NOT status CHANGED TO {end_state} BEFORE "{begin_date}"'
+        ),
     }
 
     def set_defaults(self):
@@ -32,42 +39,46 @@ class StatusdurationQuery(BaseQuery):
         for history in issue.changelog.histories:
             for item in history.items:
                 if item.field == 'status':
-                    status = item.toString
-                    timestamp = history.created
-                    transitions.append(Transition(status, timestamp))
+                    transitions.append(Transition(
+                        item.toString, item.fromString, history.created))
 
-        for index, transition in enumerate(transitions):
-            if transition.status == target_status:
+        begin_date, end_date = None, None
+
+        # Try to find the beginning date
+        # XXX - use `reversed(transitions)` here for a more generous result
+        for transition in transitions:
+            if transition.to_status == target_status:
                 self.log.debug(('Found a transition into the status '
                                 '"{status}" for issue '
-                                '{key}"').format(status=status,
+                                '{key}"').format(status=transition.to_status,
                                                  key=issue.key))
-                if index == 0:
-                    begin_date = issue.fields.created
-                # if an issue is in progress, that means the --rolling
-                # argument was specified and we want to get the number
-                # of days so far that the issue has spent in the target
-                # status, so the end date should be today and the begin
-                # date should be the date that the issue entered the current
-                # status
-                if issue.fields.status.name != 'Done':
-                    today = datetime.date.today()
-                    end_date = datetime.datetime.strftime(today, '%Y-%m-%d')
-                    begin_date = transition.timestamp
-                else:
-                    begin_date = transition.timestamp
-                    if index == len(transitions) - 1:
-                        end_date = issue.fields.resolutiondate
-                    else:
-                        end_date = transitions[index + 1].timestamp
-                duration = date_difference(end_date, begin_date)
-                return duration
+                begin_date = transition.timestamp
+                break
 
-        # If we get this far, the issue never entered the target status
-        self.log.debug(('Issue {key} never entered the "{status}" '
-                        'status.').format(key=issue.key,
-                                          status=target_status))
-        return -1
+        if not begin_date:
+            # If we get here, the issue never entered the target status
+            self.log.debug(('Issue {key} never entered the "{status}" '
+                            'status.').format(key=issue.key,
+                                              status=target_status))
+            return -1
+
+        # Try to find the end date
+        for transition in reversed(transitions):
+            if transition.from_status == target_status:
+                self.log.debug(('Found a transition out of the status '
+                                '"{status}" for issue '
+                                '{key}"').format(status=transition.from_status,
+                                                 key=issue.key))
+                end_date = transition.timestamp
+                break
+
+        # If the item is still in the target state, then use the end of the
+        # query period.
+        if not end_date:
+            end_date = self.vars['end_date']
+
+        duration = date_difference(end_date, begin_date)
+        return duration
 
     def build_results(self):
         target_status = self.vars['argument']
