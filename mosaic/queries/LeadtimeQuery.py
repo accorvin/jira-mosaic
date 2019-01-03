@@ -26,6 +26,8 @@ class LeadtimeQuery(BaseQuery):
         total_lead_time = 0
         for issue in issues:
             total_lead_time += self._get_issue_lead_time(issue)
+        if not issues:
+            return float('nan')
         return total_lead_time / len(issues)
 
     def build_results(self):

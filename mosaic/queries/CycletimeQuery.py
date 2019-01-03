@@ -68,6 +68,8 @@ class CycletimeQuery(BaseQuery):
                 total_cycle_time += time_spent
                 count += 1
 
+        if not count:
+            return float('nan')
         average_cycle_time = total_cycle_time / count
         return average_cycle_time
 
