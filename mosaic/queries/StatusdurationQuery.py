@@ -80,6 +80,13 @@ class StatusdurationQuery(BaseQuery):
         if not end_date:
             end_date = self.vars['end_date']
 
+        # Or... if the found exit from the target state is after the end of
+        # the query period, then just use the end of the query period for
+        # our calculation.  It is the status duration for that card *up to
+        # the end of the query period*.
+        if end_date > self.vars['end_date']:
+            end_date = self.vars['end_date']
+
         duration = date_difference(end_date, begin_date)
         return duration
 
