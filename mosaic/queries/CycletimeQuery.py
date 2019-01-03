@@ -6,6 +6,9 @@ from .utils import date_difference
 
 
 class CycletimeQuery(BaseQuery):
+    template = ('Between {begin_date} and {end_date}, '
+                'the average cycle time for all issues '
+                'was {value} days.')
     supports_rolling = True
     query_bases = {
         'cycletime': ('PROJECT = {project} '
@@ -68,6 +71,8 @@ class CycletimeQuery(BaseQuery):
                 total_cycle_time += time_spent
                 count += 1
 
+        if not count:
+            return float('nan')
         average_cycle_time = total_cycle_time / count
         return average_cycle_time
 
@@ -85,15 +90,18 @@ class CycletimeQuery(BaseQuery):
         self.result = average_cycle_time
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
-        line = ('Between {begin_date} and {end_date}, '
-                'the average cycle time for all issues '
-                'was {cycle_time} days.')
-        self.results_report = line.format(begin_date=start_date,
-                                          end_date=end_date,
-                                          cycle_time=average_cycle_time)
+        self.results_report = [dict(
+            begin_date=start_date,
+            end_date=end_date,
+            value=average_cycle_time,
+        )]
 
 
 class PrioritycycletimeQuery(CycletimeQuery):
+    template = ('Between {begin_date} and {end_date}, '
+                'the average cycle time for issues with the '
+                '"{qualifier}" priority '
+                'was {value} days.')
     supports_rolling = True
     query_bases = {
         'prioritycycletime': ('PROJECT = {project} '
@@ -116,11 +124,9 @@ class PrioritycycletimeQuery(CycletimeQuery):
         self.result = average_cycle_time
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
-        line = ('Between {begin_date} and {end_date}, '
-                'the average cycle time for issues with the '
-                '"{priority}" priority '
-                'was {cycle_time} days.')
-        self.results_report = line.format(begin_date=start_date,
-                                          end_date=end_date,
-                                          priority=self.vars['argument'],
-                                          cycle_time=average_cycle_time)
+        self.results_report = [dict(
+            begin_date=start_date,
+            end_date=end_date,
+            qualifier=self.vars['argument'],
+            value=average_cycle_time,
+        )]

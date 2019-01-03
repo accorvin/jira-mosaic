@@ -47,6 +47,3 @@ class BaseQuery(object):
             self.results[query] = self.client.search_issues(query_string,
                                                             expand='changelog',
                                                             maxResults=False)
-
-    def print_results(self):
-        print(self.results_report)

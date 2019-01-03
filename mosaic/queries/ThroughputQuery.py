@@ -3,6 +3,8 @@ from .utils import by_epic
 
 
 class ThroughputQuery(BaseQuery):
+    template = ('Between {begin_date} and {end_date}, '
+                '{value} issues transitioned to the Done state.')
     query_bases = {
         'throughput': ('PROJECT = {project} '
                        'AND TYPE IN ({types}) '
@@ -16,14 +18,18 @@ class ThroughputQuery(BaseQuery):
         self.result = result_count
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
-        line = ('Between {begin_date} and {end_date}, '
-                '{count} issues transitioned to the Done state.')
-        self.results_report = line.format(begin_date=start_date,
-                                          end_date=end_date,
-                                          count=result_count)
+        self.results_report = [dict(
+            begin_date=start_date,
+            end_date=end_date,
+            value=result_count,
+        )]
 
 
 class ThroughputbyepicQuery(ThroughputQuery):
+    template = ('Between {begin_date} and {end_date}, '
+                '{value} issues transitioned to the Done state '
+                'on the {qualifier} epic.')
+
     def build_results(self):
         epics = by_epic(self.results['throughput'])
 
@@ -36,25 +42,11 @@ class ThroughputbyepicQuery(ThroughputQuery):
         msg = 'The following issues were not assigned to an epic: {0}'
         self.log.debug(msg.format(unassigned_issues))
 
-        self.results_report = 'Number of issues completed by epic:\n\n'
-        epic_line = '\t{epic}: {throughput} issues\n'
-        for epic, throughput in epic_throughput.items():
-            if epic != 'UNASSIGNED':
-                self.results_report += epic_line.format(epic=epic,
-                                                        throughput=throughput)
-
-        # Count everything assigned
-        assigned = ('\tCount of issues assigned to an epic: '
-                    '{throughput}\n')
-        assigned_items = sum([
-            throughput for epic, throughput in epic_throughput.items()
-            if epic != 'UNASSIGNED'
-        ])
-        self.results_report += assigned.format(throughput=assigned_items)
-
-        # Count everything unassigned
-        unassigned = ('\tCount of issues not assigned to an epic: '
-                      '{throughput}')
-        unassigned_items = epic_throughput['UNASSIGNED']
-
-        self.results_report += unassigned.format(throughput=unassigned_items)
+        start_date = self.vars['begin_date']
+        end_date = self.vars['end_date']
+        self.results_report = [dict(
+            begin_date=start_date,
+            end_date=end_date,
+            value=throughput,
+            qualifier=epic,
+        ) for epic, throughput in epic_throughput.items()]
