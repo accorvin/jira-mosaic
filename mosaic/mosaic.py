@@ -7,6 +7,7 @@ import logging
 import sys
 
 from .queries import query_map
+from .renderers import renderer_map
 
 
 log = logging.getLogger('mosaic')
@@ -54,6 +55,9 @@ def parse_args():
     parser.add_argument('-v', '--verbose', default=False,
                         action='store_true',
                         help='Enable debug logging')
+    parser.add_argument('-o', '--output', default='text',
+                        choices=renderer_map.keys(),
+                        help='Choose one of a few different output modes')
     parser.add_argument('-l', '--list', action='store_true',
                         default=False,
                         help='Print a list of available queries')
@@ -105,6 +109,8 @@ def run(args, client=None):
         'types': quoted_types,
     }
 
+    renderer = renderer_map[args['output']]
+
     check_queries(args['query'])
     queries = []
     for query in args['query']:
@@ -120,7 +126,8 @@ def run(args, client=None):
         return queries[0].result
     else:
         for query in queries:
-            query.print_results()
+            for line in renderer(query, query.results_report):
+                print(line)
 
 
 def main():
