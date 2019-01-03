@@ -109,7 +109,7 @@ def run(args, client=None):
         'types': quoted_types,
     }
 
-    renderer = renderer_map[args['output']]
+    renderer = renderer_map[args.get('output', 'text')]
 
     check_queries(args['query'])
     queries = []
