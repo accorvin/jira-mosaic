@@ -49,4 +49,5 @@ class BaseQuery(object):
                                                             maxResults=False)
 
     def print_results(self):
-        print(self.results_report)
+        for result in self.results_report:
+            print(self.template.format(**result))

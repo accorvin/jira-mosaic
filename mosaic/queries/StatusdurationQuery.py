@@ -10,6 +10,9 @@ class Transition():
 
 
 class StatusdurationQuery(BaseQuery):
+    template = ('Between {begin_date} and {end_date}, '
+                'the average time spent in {qualifier} status '
+                'was {value} days.')
     supports_rolling = True
 
     # This means you can use --rolling in combination with --end-date
@@ -124,12 +127,9 @@ class StatusdurationQuery(BaseQuery):
             average_duration = total_duration / issues
 
         self.result = average_duration
-        rolling_text = ' (rolling) ' if self.rolling else ' '
-        line = ('Between {begin_date} and {end_date}, '
-                'the average{rolling}time spent in {status} status '
-                'was {duration} days.')
-        self.results_report = line.format(begin_date=start_date,
-                                          end_date=end_date,
-                                          status=target_status,
-                                          rolling=rolling_text,
-                                          duration=average_duration)
+        self.results_report = [dict(
+            begin_date=start_date,
+            end_date=end_date,
+            qualifier=target_status,
+            value=average_duration,
+        )]
