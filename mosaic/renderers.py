@@ -7,11 +7,12 @@ def results_to_text(query, results):
 
 
 def results_to_csv(query, results):
-    templ = "{begin_date},{end_date},{value},{project},{qualifier},{rolling}"
+    template = "{begin_date},{end_date},{count}," + \
+        "{value},{project},{qualifier},{rolling}"
     for result in results:
         # Set a default value
         result['qualifier'] = result.get('qualifier', '')
-        yield templ.format(
+        yield template.format(
             project=query.vars['project'],
             rolling=query.rolling,
             **result)

@@ -139,4 +139,5 @@ class StatusdurationQuery(BaseQuery):
             end_date=end_date,
             qualifier=target_status,
             value=average_duration,
+            count=len(issues),
         )]

@@ -22,6 +22,7 @@ class ThroughputQuery(BaseQuery):
             begin_date=start_date,
             end_date=end_date,
             value=result_count,
+            count=result_count,
         )]
 
 
@@ -48,5 +49,6 @@ class ThroughputbyepicQuery(ThroughputQuery):
             begin_date=start_date,
             end_date=end_date,
             value=throughput,
+            count=throughput,
             qualifier=epic,
         ) for epic, throughput in epic_throughput.items()]

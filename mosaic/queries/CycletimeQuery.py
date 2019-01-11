@@ -72,9 +72,9 @@ class CycletimeQuery(BaseQuery):
                 count += 1
 
         if not count:
-            return float('nan')
+            return float('nan'), 0
         average_cycle_time = total_cycle_time / count
-        return average_cycle_time
+        return average_cycle_time, count
 
     def build_results(self):
         issues = self.results['cycletime']
@@ -85,8 +85,8 @@ class CycletimeQuery(BaseQuery):
                            'calculated using in progress issues'))
             self.log.debug(('There are {len} issues in '
                            'progress.').format(len=len(in_progress_issues)))
-        average_cycle_time = self._get_total_cycle_time(issues,
-                                                        in_progress_issues)
+        average_cycle_time, count = self._get_total_cycle_time(
+            issues, in_progress_issues)
         self.result = average_cycle_time
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
@@ -94,6 +94,7 @@ class CycletimeQuery(BaseQuery):
             begin_date=start_date,
             end_date=end_date,
             value=average_cycle_time,
+            count=count,
         )]
 
 
@@ -119,8 +120,8 @@ class PrioritycycletimeQuery(CycletimeQuery):
     def build_results(self):
         issues = self.results['prioritycycletime']
         in_progress_issues = self.results['prioritycycletime_rolling']
-        average_cycle_time = self._get_total_cycle_time(issues,
-                                                        in_progress_issues)
+        average_cycle_time, count = self._get_total_cycle_time(
+            issues, in_progress_issues)
         self.result = average_cycle_time
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
@@ -129,4 +130,5 @@ class PrioritycycletimeQuery(CycletimeQuery):
             end_date=end_date,
             qualifier=self.vars['argument'],
             value=average_cycle_time,
+            count=count,
         )]

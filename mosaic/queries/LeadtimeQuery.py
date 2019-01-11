@@ -29,12 +29,12 @@ class LeadtimeQuery(BaseQuery):
         for issue in issues:
             total_lead_time += self._get_issue_lead_time(issue)
         if not issues:
-            return float('nan')
-        return total_lead_time / len(issues)
+            return float('nan'), 0
+        return total_lead_time / len(issues), len(issues)
 
     def build_results(self):
         issues = self.results['leadtime']
-        average_lead_time = self._get_issues_lead_time(issues)
+        average_lead_time, count = self._get_issues_lead_time(issues)
         self.result = average_lead_time
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
@@ -42,6 +42,7 @@ class LeadtimeQuery(BaseQuery):
             begin_date=start_date,
             end_date=end_date,
             value=average_lead_time,
+            count=count,
         )]
 
 
@@ -61,5 +62,6 @@ class LeadtimebyepicQuery(LeadtimeQuery):
             begin_date=start_date,
             end_date=end_date,
             qualifier=epic,
-            value=lead_time,
-        ) for epic, lead_time in epic_lead_times.items()]
+            value=values[0],
+            count=values[1],
+        ) for epic, values in epic_lead_times.items()]
