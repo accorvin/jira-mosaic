@@ -97,18 +97,19 @@ class StatusdurationQuery(BaseQuery):
         self.log.debug(('{len} issues were completed during the target '
                         'date range.').format(len=issues))
         total_duration = 0
-        for issue in self.results['statusduration']:
-            duration = self._get_time_in_status(issue, target_status)
-            if duration < 0:
-                issues = issues - 1
-            else:
-                self.log.debug(('Time spent in status "{status}" for issue '
-                                '"{key}: {duration} '
-                                'days').format(status=target_status,
-                                               key=issue.key,
-                                               duration=duration))
-                total_duration += duration
-        if self.rolling:
+        if not self.rolling:
+            for issue in self.results['statusduration']:
+                duration = self._get_time_in_status(issue, target_status)
+                if duration < 0:
+                    issues = issues - 1
+                else:
+                    self.log.debug(('Time spent in status "{status}" for '
+                                    'issue {key}: {duration} '
+                                    'days').format(status=target_status,
+                                                   key=issue.key,
+                                                   duration=duration))
+                    total_duration += duration
+        else:
             self.log.debug(('Rolling argument specified. Issues in progress '
                             'will be used to calculate status duration.'))
             self.log.debug(('{len} issues are currently in '
