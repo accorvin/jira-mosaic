@@ -120,14 +120,17 @@ class StatusdurationQuery(BaseQuery):
                             'progress.').format(len=len(in_progress_issues)))
             for issue in in_progress_issues:
                 duration = self._get_time_in_status(issue, target_status)
-                if duration >= 0:
-                    self.log.debug(('Time spent in status "{status}" for '
-                                    'issue "{key}: {duration} '
-                                    'days').format(status=target_status,
-                                                   key=issue.key,
-                                                   duration=duration))
-                    total_duration += duration
-                    issues += 1
+                if duration < self.vars['lower_bound']:
+                    continue
+                if duration > self.vars['upper_bound']:
+                    continue
+                self.log.debug(('Time spent in status "{status}" for '
+                                'issue "{key}: {duration} '
+                                'days').format(status=target_status,
+                                               key=issue.key,
+                                               duration=duration))
+                total_duration += duration
+                issues += 1
 
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']

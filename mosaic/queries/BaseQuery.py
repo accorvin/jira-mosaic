@@ -13,6 +13,8 @@ class BaseQuery(object):
         self.result = None
         self.rolling = vars['rolling']
         self.query_append = vars.get('query_append', '')
+        self.lower_bound = float(vars.get('lower_bound', '0'))
+        self.upper_bound = float(vars.get('upper_bound', 'inf'))
         if self.rolling:
             if not self.supports_rolling:
                 msg = ('The specified query: "{query}" does not support the '

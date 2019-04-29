@@ -70,6 +70,12 @@ def parse_args():
     parser.add_argument('--query-append', default='',
                         help=('An additional string to be appended to all '
                               'JIRA search queries'))
+    parser.add_argument('--lower-bound', default='0',
+                        help=('A lower bound, below which durations are '
+                              'discarded as anomolous'))
+    parser.add_argument('--upper-bound', default='inf',
+                        help=('An upper bound, above which durations are '
+                              'discarded as anomolous'))
     parser.add_argument('-t', '--types', default=DEFAULT_TYPES,
                         help=('An optional comma separated string argument '
                               'to query for specific types of tickets '
@@ -106,6 +112,8 @@ def run(args, client=None):
         'argument': args['query_argument'],
         'rolling': args.get('rolling', False),
         'query_append': args.get('query_append', ''),
+        'lower_bound': float(args.get('lower_bound', '0')),
+        'upper_bound': float(args.get('upper_bound', 'inf')),
         'types': quoted_types,
     }
 
