@@ -53,8 +53,10 @@ class StatusdurationQuery(BaseQuery):
             if transition.to_status == target_status:
                 self.log.debug(('Found a transition into the status '
                                 '"{status}" for issue '
-                                '{key}"').format(status=transition.to_status,
-                                                 key=issue.key))
+                                '{key} on {date}').format(
+                                    status=transition.to_status,
+                                    key=issue.key,
+                                    date=transition.timestamp))
                 begin_date = transition.timestamp
                 break
 
@@ -70,8 +72,10 @@ class StatusdurationQuery(BaseQuery):
             if transition.from_status == target_status:
                 self.log.debug(('Found a transition out of the status '
                                 '"{status}" for issue '
-                                '{key}"').format(status=transition.from_status,
-                                                 key=issue.key))
+                                '{key} on {date}').format(
+                                    status=transition.from_status,
+                                    key=issue.key,
+                                    date=transition.timestamp))
                 end_date = transition.timestamp
                 break
 
