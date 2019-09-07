@@ -21,7 +21,7 @@ def by_epic(issues):
     return epics
 
 
-def date_difference(later_date, earlier_date):
+def date_difference(later_date, earlier_date, epoch):
     try:
         date_format = '%Y-%m-%dT%H:%M:%S'
         later_date = later_date[0:19]
@@ -30,6 +30,8 @@ def date_difference(later_date, earlier_date):
                                                        date_format)
         earlier_date_object = datetime.datetime.strptime(earlier_date,
                                                          date_format)
+        if later_date_object.date() < epoch:
+            return float('-inf')
         difference = (later_date_object - earlier_date_object).total_seconds()
         # Convert difference to days.
         return difference / float(60 * 60 * 24)
@@ -41,5 +43,7 @@ def date_difference(later_date, earlier_date):
                                                        date_format)
         earlier_date_object = datetime.datetime.strptime(earlier_date,
                                                          date_format)
+        if later_date_object.date() < epoch:
+            return float('-inf')
         difference = (later_date_object - earlier_date_object).days
         return difference

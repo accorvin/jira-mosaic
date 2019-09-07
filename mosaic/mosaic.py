@@ -36,6 +36,7 @@ def parse_args():
 
     today = datetime.date.today()
     two_weeks_ago = today - datetime.timedelta(days=14)
+    one_year_ago = today - datetime.timedelta(days=364)
     parser.add_argument('-b', '--begin-date', default=str(two_weeks_ago),
                         help=('The beginning of the date range to calculate '
                               'metrics for'))
@@ -70,7 +71,7 @@ def parse_args():
     parser.add_argument('--query-append', default='',
                         help=('An additional string to be appended to all '
                               'JIRA search queries'))
-    parser.add_argument('--lower-bound', default='0',
+    parser.add_argument('--lower-bound', default='0.001',
                         help=('A lower bound, below which durations are '
                               'discarded as anomolous'))
     parser.add_argument('--upper-bound', default='inf',
@@ -80,6 +81,8 @@ def parse_args():
                         help=('An optional comma separated string argument '
                               'to query for specific types of tickets '
                               'eg:\'bug, story\' '))
+    parser.add_argument('-E', '--epoch', default=str(one_year_ago),
+                        help=('A date before which issues are not considered.'))
 
     return vars(parser.parse_args())
 
@@ -115,6 +118,7 @@ def run(args, client=None):
         'lower_bound': float(args.get('lower_bound', '0')),
         'upper_bound': float(args.get('upper_bound', 'inf')),
         'types': quoted_types,
+        'epoch': datetime.date(*map(int, args['epoch'].split('-'))),
     }
 
     renderer = renderer_map[args.get('output', 'text')]

@@ -91,7 +91,7 @@ class StatusdurationQuery(BaseQuery):
         if end_date > self.vars['end_date']:
             end_date = self.vars['end_date']
 
-        duration = date_difference(end_date, begin_date)
+        duration = date_difference(end_date, begin_date, self.vars['epoch'])
         return duration
 
     def build_results(self):

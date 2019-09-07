@@ -43,7 +43,7 @@ class CycletimeQuery(BaseQuery):
     def _get_issue_cycle_time(self, issue):
         start_date = self._get_issue_start_date(issue)
         cycle_time = date_difference(issue.fields.resolutiondate,
-                                     start_date)
+                                     start_date, self.vars['epoch'])
         line = '\tFor issue {issue}, the cycle time was {cycletime} days'
         self.log.debug(line.format(issue=issue.key, cycletime=cycle_time))
         return cycle_time
