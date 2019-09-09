@@ -19,7 +19,7 @@ class LeadtimeQuery(BaseQuery):
 
     def _get_issue_lead_time(self, issue):
         lead_time = date_difference(
-            issue.fields.resolutiondate, issue.fields.created)
+            issue.fields.resolutiondate, issue.fields.created, self.vars['epoch'])
         line = '\tFor issue {issue}, the lead time was {leadtime} days'
         self.log.debug(line.format(issue=issue.key, leadtime=lead_time))
         return lead_time
