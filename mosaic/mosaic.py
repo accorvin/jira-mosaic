@@ -82,7 +82,7 @@ def parse_args():
                               'to query for specific types of tickets '
                               'eg:\'bug, story\' '))
     parser.add_argument('-E', '--epoch', default=str(one_year_ago),
-                        help=('A date before which issues are not considered.'))
+                        help=('A date before which issues are not considered'))
 
     return vars(parser.parse_args())
 
