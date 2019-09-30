@@ -111,7 +111,7 @@ def run(args, client=None):
         'project': args['project'],
         'begin_date': args['begin_date'],
         'end_date': args['end_date'],
-        'end_state': args.get('end_state', 'Done'),
+        'end_state': args.get('end_state', 'Resolved'),
         'argument': args['query_argument'],
         'rolling': args.get('rolling', False),
         'query_append': args.get('query_append', ''),
@@ -119,6 +119,8 @@ def run(args, client=None):
         'upper_bound': float(args.get('upper_bound', 'inf')),
         'types': quoted_types,
         'epoch': datetime.date(*map(int, args['epoch'].split('-'))),
+        'verbose': args.get('verbose', False),
+        'default_points': args.get('default_points', 3.0),
     }
 
     renderer = renderer_map[args.get('output', 'text')]
