@@ -14,8 +14,14 @@ class ThroughputQuery(BaseQuery):
     }
 
     def build_results(self):
+        if self.vars['verbose']:
+            for result in self.results['throughput']:
+                print(result)
+        points = sum(
+            issue.fields.customfield_10002 or self.vars['default_points']
+            for issue in self.results['throughput'])
         result_count = len(self.results['throughput'])
-        self.result = result_count
+        self.result = '{} stories {} points'.format(result_count, points)
         start_date = self.vars['begin_date']
         end_date = self.vars['end_date']
         self.results_report = [dict(
